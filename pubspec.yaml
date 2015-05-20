@@ -1,0 +1,16 @@
+name: draft
+version: 0.0.1
+author: Ian Meintjes
+description: An absolute bare-bones web app.
+homepage: github.com/meintjes
+environment:
+  sdk: '>=1.0.0 <2.0.0'
+dependencies:
+  _discoveryapis_commons: any
+  browser: '>=0.10.0 <0.11.0'
+  crypto: '>=0.9.0 <0.10.0'
+  http: any
+  http_server: any
+  logging_handlers: any
+  rpc: any
+  uuid: any
