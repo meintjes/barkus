@@ -34,7 +34,7 @@ Future<List<Map<String, String>>> generatePack(String shortname) async {
 Future<List<Map<String, String>>> getCardsFrom(String shortname, String rarity, int numCards) async {
   List<Map<String, String>> cards = new List<Map>();
   
-  File file = new File("../common/sets/${shortname}/${rarity}.txt");
+  File file = new File("lib/common/sets/${shortname}/${rarity}.txt");
   List<String> cardNames = await file.readAsLines();
   cardNames.shuffle(random);
 
