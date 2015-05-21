@@ -71,7 +71,7 @@ Future requestHandler(HttpRequest request) async {
  * 
  * Each message the server sends via WebSocket is a JSON-encoded Map with keys:
  *    error (a String containing an error to show the user; the other fields
- *           are only present if this one is the empty string)
+ *           are only present if this one is not)
  *    pickNum (an int expressing the number of the current pick) 
  *    cards (a List<Map> expressing the current pack's contents)
  *    pool (a List<Map> expressing your pool of already-picked cards)
@@ -88,6 +88,10 @@ Future requestHandler(HttpRequest request) async {
 
 Future listenToWebSocket(WebSocket ws) async {
   Map currentState = new Map();
-  currentState['error'] = "This is a message from the server!";
+  currentState['pickNum'] = 1;
+  currentState['cards'] = [{"name":"Ponder", "rarity":"common"},
+                           {"name":"Select", "rarity":"common"},
+                           {"name":"Susurrus of Voor", "rarity":"common"}];
+  currentState['pool'] = [];
   ws.add(JSON.encode(currentState));
 }

@@ -6,6 +6,6 @@ Uuid uuid = new Uuid();
 
 // Creates a draft with a unique ID. Returns that ID.
 String create() {
-  // TODO verify uniqueness
+  // TODO: Actually create something.
   return uuid.v4();
 }

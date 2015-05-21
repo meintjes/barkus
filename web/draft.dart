@@ -26,8 +26,8 @@ void onConnected(Event e) {
 void handleMessage(MessageEvent e) {
   // See draftserver.dart for details on the message format.
   Map message = JSON.decode(e.data);
-
-  if (message['error'] != "") {
+  
+  if (message.containsKey('error')) {
     querySelector("#output").text = message['error'];
     return;
   }
