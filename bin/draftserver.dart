@@ -71,26 +71,52 @@ Future requestHandler(HttpRequest request) async {
  * For the draft creation API, see lib/server/draftapi.dart.
  * 
  * Each message the server sends via WebSocket is a JSON-encoded Map with keys:
- *    error (a String containing an error to show the user; the other fields
- *           are only present if this one is not)
+ *    message (a String containing a message to show the user)
+ * OR with keys:
  *    pickNum (an int expressing the number of the current pick) 
  *    cards (a List<Map> expressing the current pack's contents)
  *    pool (a List<Map> expressing your pool of already-picked cards)
  * The Maps in these lists represent individual cards and have keys:
  *    name (the name of the card)
- *    rarity ('common', 'uncommon', 'rare', 'mythic', 'special')
+ *    rarity (a string: 'common', 'uncommon', 'rare', 'mythic', or 'special')
  * 
- * Each message the client sends should be a JSON-encoded Map with keys:
- *    user (a string uniquely identifying the user
+ * To join a draft, the client should send a JSON-encoded Map with keys:
+ *    user (a string uniquely identifying the user)
  *    pod (the string which identifies the pod the user is making a pick for)
- *    pick (the card the user is picking)
- * To attempt to join a draft, send a request with pick == -1.
+ * To make a pick, the client should send a JSON-encoded Map with keys:
+ *    pick (an int which is the index of the card the user has picked)
  */
 
 Future listenToWebSocket(WebSocket ws) async {
-  Map currentState = new Map();
-  currentState['pickNum'] = 1;
-  currentState['cards'] = await internal.generatePack("VEL");
-  currentState['pool'] = [];
-  ws.add(JSON.encode(currentState));
+  String userId = "";
+  internal.Draft draft = null;
+
+  print("Listening to socket.");
+  await for (String json in ws) {
+    print("Received message from client.");
+    try {
+      Map message = JSON.decode(json);
+      if (message.containsKey('user') && message.containsKey('pod')) {
+        userId = message['user'];
+        draft = internal.drafts[message['pod']];
+        draft.join(userId, (Map map) => ws.add(JSON.encode(map)));
+      }
+      else if (message.containsKey('pick')) {
+        int pick = message['pick'];
+        draft.pick(userId, pick);
+      }
+      else {
+        throw new Exception("Message did not contain the correct fields.");
+      }
+    }
+    catch (error) {
+      // Do nothing. We just ignore requests if they're invalid.
+      print("Invalid WebSocket request ignored: ${error.toString()}");
+    }
+  }
+  
+  if (draft != null) {
+    draft.leave(userId);
+  }
+
 }

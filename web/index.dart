@@ -14,7 +14,7 @@ void main() {
   api = new DraftApi(client, rootUrl: "$protocol//$serverUrl");
   
   for (var elem in querySelectorAll("#pack")) {
-    for (CardSet set in sets) {
+    for (CardSet set in supportedSets) {
       Element option = new Element.option();
       option.text = set.longname;
       elem.children.add(option);

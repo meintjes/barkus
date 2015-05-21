@@ -13,11 +13,10 @@ void main() {
 }
 
 void onConnected(Event e) {
-  // Send user ID and draft ID to server so they add us to the draft.
+  // Send user ID and pod ID to server so they add us to the draft.
   Map request = new Map();
   request['user'] = getUserId();
-  request['draft'] = getPodId();
-  request['index'] = -1;
+  request['pod'] = getPodId();
   ws.send(JSON.encode(request));
   
   ws.onMessage.listen(handleMessage);
@@ -27,8 +26,8 @@ void handleMessage(MessageEvent e) {
   // See draftserver.dart for details on the message format.
   Map message = JSON.decode(e.data);
   
-  if (message.containsKey('error')) {
-    querySelector("#output").text = message['error'];
+  if (message.containsKey('message')) {
+    querySelector("#output").text = message['message'];
     return;
   }
 
@@ -67,8 +66,6 @@ void displayError(Event e) {
 
 void pickCard(Event e) {
   Map request = new Map();
-  request['user'] = getUserId();
-  request['draft'] = getPodId();
   request['index'] = int.parse((e.target as Element).getAttribute("index"));
 
   ws.send(JSON.encode(request));
