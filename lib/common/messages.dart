@@ -1,14 +1,8 @@
 library draft.messages;
 
 /**
- * Classes used for HTTP messages.
+ * Classes used for HTTP messages in draft creation.
  */
-class User {
-  String id;
-  
-  User();
-}
-
 class CreateRequest {
   List<int> sets;
 
@@ -19,20 +13,4 @@ class CreateResponse {
   String draftId;
   
   CreateResponse();
-}
-
-
-
-class Card {
-  String name;
-  String rarity;
-  
-  Card(this.name, this.rarity);
-}
-
-class Pack {
-  final int pickNum;
-  final List<Card> cards;
-
-  Pack(this.pickNum, this.cards);
 }

@@ -54,7 +54,7 @@ Future createPod(Event e) async {
     response = await api.createDraft(request);
     String draftId = response.draftId;
     Element link = new Element.a();
-    link.setAttribute("href", "/draft.html?id=" + draftId);
+    link.setAttribute("href", "/draft.html?pod=" + draftId);
     link.text = "Continue to lobby";
     result.text = "";
     result.children.add(link);
