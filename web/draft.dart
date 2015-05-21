@@ -1,17 +1,15 @@
 import 'dart:html';
 import 'dart:convert';
 import 'package:uuid/uuid.dart';
+import 'package:draft/common/messages.dart';
 
 WebSocket ws;
 
 void main() {
-  ws = new WebSocket('ws://${Uri.base.host}:${Uri.base.port}/ws')
+  ws = new WebSocket('ws://${Uri.base.host}:${SERVER_PORT}/ws')
     ..onError.first.then(displayError)
     ..onClose.first.then(displayError)
     ..onOpen.first.then(onConnected);
-  
-  Map request = new Map();
-  ws.send(JSON.encode(request));
 }
 
 void onConnected(Event e) {
@@ -28,6 +26,11 @@ void onConnected(Event e) {
 void handleMessage(MessageEvent e) {
   // See draftserver.dart for details on the message format.
   Map message = JSON.decode(e.data);
+
+  if (message['error'] != "") {
+    querySelector("#output").text = message['error'];
+    return;
+  }
 
   int pickNum = message['pickNum'];
   querySelector("#pickNum").text = "Pick $pickNum:";

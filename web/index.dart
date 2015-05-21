@@ -21,7 +21,7 @@ void main() {
     }
   }
 
-  querySelector("#create").onClick.first.then(createPod);
+  querySelector("#create").onClick.listen(createPod);
 }
 
 Future createPod(Event e) async {
@@ -32,8 +32,8 @@ Future createPod(Event e) async {
   for (var elem in packs) {
     int selectedPack = (elem as SelectElement).selectedIndex - 1;
     if (selectedPack < 0) {
-      (e.target as Element).onClick.first.then(createPod);
-      return;
+      querySelector("#create").onClick.listen(createPod);
+      return null;
     }
     else {
       request.sets.add(selectedPack);
