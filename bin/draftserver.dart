@@ -8,6 +8,7 @@ import 'package:rpc/rpc.dart';
 import 'package:http_server/http_server.dart';
 import 'package:draft/common/messages.dart';
 import 'package:draft/server/draftapi.dart';
+import 'package:draft/server/internal.dart' as internal;
 
 final ApiServer _apiServer = new ApiServer(prettyPrint: true);
 
@@ -89,9 +90,7 @@ Future requestHandler(HttpRequest request) async {
 Future listenToWebSocket(WebSocket ws) async {
   Map currentState = new Map();
   currentState['pickNum'] = 1;
-  currentState['cards'] = [{"name":"Ponder", "rarity":"common"},
-                           {"name":"Select", "rarity":"common"},
-                           {"name":"Susurrus of Voor", "rarity":"common"}];
+  currentState['cards'] = await internal.generatePack("VEL");
   currentState['pool'] = [];
   ws.add(JSON.encode(currentState));
 }
