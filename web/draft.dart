@@ -18,7 +18,8 @@ void onConnected(Event e) {
   request['user'] = getUserId();
   request['pod'] = getPodId();
   ws.send(JSON.encode(request));
-  
+
+  // Start listening for updates.
   ws.onMessage.listen(handleMessage);
 }
 
@@ -28,35 +29,43 @@ void handleMessage(MessageEvent e) {
   
   if (message.containsKey('message')) {
     querySelector("#output").text = message['message'];
-    return;
   }
 
-  int pickNum = message['pickNum'];
-  querySelector("#pickNum").text = "Pick $pickNum:";
-
-  Element packElement = querySelector("#currentPack");  
-  packElement.children.clear();
-  List<Map> cards = message['cards'];
-  for (int i = 0; i < cards.length; ++i) {
-    packElement.children.add(getCardLink(cards[i])
-                               ..setAttribute("index", "$i")
-                               ..onClick.listen(pickCard)
-                            );
-    packElement.children.add(new Element.br());
+  if (message.containsKey('pack')) {
+    List cards = message['pack'];
+    List<Element> pack = querySelector("#currentPack").children;
+    pack.clear();
+    for (int i = 0; i < cards.length; ++i) {
+      pack.add(getCardLink(cards[i])
+                 ..setAttribute("index", "$i")
+                 ..onClick.listen(pickCard)
+              );
+      pack.add(new Element.br());
+    }
   }
-  
-  // TODO: Show pool.
+
+  if (message.containsKey('pool')) {
+    List cards = message['pool'];
+    List<Element> pool = querySelector("#pool").children;
+    
+    pool.clear();
+    for (int i = 0; i < cards.length; ++i) {
+      pool.add(new Element.div()..text = "${cards[i]['quantity']}");
+      pool.add(getCardLink(cards[i]));
+      pool.add(new Element.br());
+    }
+  }
 }
 
-// Returns a 'link' to the specified card (it goes nowhere).
+// Returns a link to the specified card.
 Element getCardLink(Map card) {
-  Element cardElement = new Element.a();
+  Element cardElement = new Element.div();
   cardElement.text = card['name'];
-
-  // TODO: Indicate rarity with CSS.
+  cardElement.setAttribute('class', 'card');
+  cardElement.setAttribute('rarity', card['rarity']);
+  
   // TODO: Autocard.
-  // TODO: Use CSS for links, rather than targeting '#'.
-  cardElement.setAttribute('href', '#');
+
   return cardElement;
 }
 
@@ -66,7 +75,9 @@ void displayError(Event e) {
 
 void pickCard(Event e) {
   Map request = new Map();
-  request['index'] = int.parse((e.target as Element).getAttribute("index"));
+  request['pick'] = int.parse((e.target as Element).getAttribute("index"));
+  
+  querySelector("#currentPack").children.clear();
 
   ws.send(JSON.encode(request));
 }

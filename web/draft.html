@@ -3,12 +3,20 @@
 <html>
   <head>
     <title>Draft</title>
+    <link rel="stylesheet" href="styles/draft.css">
   </head>
 
   <body>
     <p id="output"></p>
-    <p id="pickNum"></p>
-    <p id="currentPack"></p>
+
+    <div class="column">
+      <p id="currentPack"></p>
+    </div>
+    
+    <div class="column">
+      <p id="pool"></p>
+    </div>
+    
     <script type="application/dart" src="draft.dart"></script>
     <script src="packages/browser/dart.js"></script>
   </body>

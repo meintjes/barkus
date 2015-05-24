@@ -1,0 +1,32 @@
+.column {
+  float: left;
+  width: 50%;
+}
+
+.card {
+  cursor: pointer;
+}
+
+.card:hover {
+  text-decoration: underline;
+}
+
+.card[rarity=special] {
+  color: purple;
+}
+
+.card[rarity=common] {
+  color: black;
+}
+
+.card[rarity=uncommon] {
+  color: silver;
+}
+
+.card[rarity=rare] {
+  color: gold;
+}
+
+.card[rarity=mythic] {
+  color: red;
+}

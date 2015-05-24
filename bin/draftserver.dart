@@ -70,15 +70,15 @@ Future requestHandler(HttpRequest request) async {
 /**
  * For the draft creation API, see lib/server/draftapi.dart.
  * 
- * Each message the server sends via WebSocket is a JSON-encoded Map with keys:
+ * Each message the server sends via WebSocket is a JSON-encoded Map. It may
+ * contain any or all of the following keys (use containsKey to check):
  *    message (a String containing a message to show the user)
- * OR with keys:
- *    pickNum (an int expressing the number of the current pick) 
- *    cards (a List<Map> expressing the current pack's contents)
+ *    pack (a List<Map> expressing the current pack's contents)
  *    pool (a List<Map> expressing your pool of already-picked cards)
  * The Maps in these lists represent individual cards and have keys:
  *    name (the name of the card)
  *    rarity (a string: 'common', 'uncommon', 'rare', 'mythic', or 'special')
+ *    quantity (ONLY FOR POOL; the number of that card in the player's pool)
  * 
  * To join a draft, the client should send a JSON-encoded Map with keys:
  *    user (a string uniquely identifying the user)
@@ -86,7 +86,6 @@ Future requestHandler(HttpRequest request) async {
  * To make a pick, the client should send a JSON-encoded Map with keys:
  *    pick (an int which is the index of the card the user has picked)
  */
-
 Future listenToWebSocket(WebSocket ws) async {
   String userId = "";
   internal.Draft draft = null;
@@ -110,11 +109,15 @@ Future listenToWebSocket(WebSocket ws) async {
       }
     }
     catch (error) {
-      // Do nothing. We just ignore requests if they're invalid.
-      print("Invalid WebSocket request ignored: ${error.toString()}");
+      // If we get a bad request, close the connection.
+      print("Invalid WebSocket request: ${error.toString()}");
+      draft.leave(userId);
+      ws.close();
+      return null;
     }
   }
-  
+
+  // When the user closes the connection, try to leave the draft.
   if (draft != null) {
     draft.leave(userId);
   }
