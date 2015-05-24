@@ -50,7 +50,7 @@ void handleMessage(MessageEvent e) {
     
     pool.clear();
     for (int i = 0; i < cards.length; ++i) {
-      pool.add(new Element.div()..text = "${cards[i]['quantity']}");
+      pool.add(new Element.span()..text = "${cards[i]['quantity']} ");
       pool.add(getCardLink(cards[i]));
       pool.add(new Element.br());
     }
@@ -59,7 +59,7 @@ void handleMessage(MessageEvent e) {
 
 // Returns a link to the specified card.
 Element getCardLink(Map card) {
-  Element cardElement = new Element.div();
+  Element cardElement = new Element.span();
   cardElement.text = card['name'];
   cardElement.setAttribute('class', 'card');
   cardElement.setAttribute('rarity', card['rarity']);

@@ -90,9 +90,7 @@ Future listenToWebSocket(WebSocket ws) async {
   String userId = "";
   internal.Draft draft = null;
 
-  print("Listening to socket.");
   await for (String json in ws) {
-    print("Received message from client.");
     try {
       Map message = JSON.decode(json);
       if (message.containsKey('user') && message.containsKey('pod')) {
