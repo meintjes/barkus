@@ -209,7 +209,7 @@ class Drafter {
   {}
   
   void sendPack() {
-    if (sendState != null) {
+    if (sendState != null && packs.isNotEmpty) {
       Map message = new Map();
       message['message'] = "Pick a card to add to your pool:";
       message['pack'] = packs.first;

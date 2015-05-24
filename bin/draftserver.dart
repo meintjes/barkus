@@ -109,7 +109,9 @@ Future listenToWebSocket(WebSocket ws) async {
     catch (error) {
       // If we get a bad request, close the connection.
       print("Invalid WebSocket request: ${error.toString()}");
-      draft.leave(userId);
+      if (draft != null) {
+        draft.leave(userId);
+      }
       ws.close();
       return null;
     }
