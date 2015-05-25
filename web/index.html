@@ -3,18 +3,37 @@
 <html>
   <head>
     <title>Draft</title>
+    <link rel="stylesheet" href="styles/main.css" />
+    <link rel="stylesheet" href="styles/home.css" />
   </head>
  
   <body>
-    <form>
-      <select id="pack"><option value="">Choose a set...</option></select>
-      <select id="pack"><option value="">Choose a set...</option></select>
-      <select id="pack"><option value="">Choose a set...</option></select>
-      <input type="button" value="Create pod" id="create"><br>
-    </form>
+    <div class="container">
+      <header>
+        <h1><a href="/">Barkus.me</a></h1>
+        Custom Magic: the Gathering set drafting
+      </header>
 
-    <div id="result"></div>
+      <div class="body">
+        <h2>Create a new draft</h2>
 
+        <form>
+          <div class="set-selection">
+            <select id="pack" required><option value="" disabled>Choose a set...</option></select>
+            <select id="pack" required><option value="" disabled>Choose a set...</option></select>
+            <select id="pack" required><option value="" disabled>Choose a set...</option></select>
+          </div>
+          <input
+            type="submit"
+            class="button"
+            id="create"
+            value="Create pod"
+          >
+
+          <div id="result"></div>
+        </form>
+      </div>
+    </div>
     <script type="application/dart" src="index.dart"></script>
     <script src="packages/browser/dart.js"></script>
   </body>

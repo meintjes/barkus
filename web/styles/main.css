@@ -1,0 +1,71 @@
+body {
+  background-color: #efefef;
+  color: #333333;
+}
+
+.container {
+  box-sizing: border-box;
+
+  margin: 10px auto;
+  /* Take care of the header padding in the header. */
+  padding: 0px 30px 30px 30px;
+
+  width: 800px;
+
+  font-family: "Helvetica Neue"
+             , "Helvetica"
+             , "Arial"
+             , sans-serif
+             ;
+  font-size: 13px;
+  line-spacing: 1.25pt;
+}
+
+.body {
+  padding: 30px;
+
+  background-color: #fafafa;
+}
+
+header {
+  padding-top: 30px;
+  padding-bottom: 10px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0px;
+
+  font-family: "Century Gothic"
+             , "Montserrat"
+             , sans-serif
+             ;
+}
+
+h1 {
+  padding: 0px;
+
+  font-size: 48px;
+}
+
+h2 {
+  font-size: 24px;
+}
+
+.clearfix {
+  clear: both;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+h1 a {
+  color: inherit;
+}
+h1 a:hover {
+  text-decoration: none;
+}

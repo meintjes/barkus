@@ -1,0 +1,46 @@
+form {
+  width: 100%;
+
+  text-align: center;
+}
+
+.button {
+  cursor: pointer;
+
+  padding: 15px;
+
+  border-style: none;
+  outline: none;
+
+  background-color: #dcdcdc;
+
+  font-size: 15px;
+}
+
+.button:hover {
+  background-color: #e4e4e4;
+}
+
+.button:active, .button:hover[disabled] {
+  background-color: #dcdcdc;
+}
+
+.button[disabled] {
+  cursor: auto;
+}
+
+select {
+  padding: 15px;
+
+  border: 0px;
+
+  background-color: #dcdcdc;
+}
+
+.set-selection {
+  padding: 20px 0px;
+}
+
+#result {
+
+}
