@@ -3,18 +3,30 @@
 <html>
   <head>
     <title>Draft</title>
+    <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="styles/draft.css">
   </head>
 
   <body>
-    <p id="output"></p>
+    <div class="container">
+      <header>
+        <h1><a href="/">Barkus.me</a></h1>
+        Custom Magic: the Gathering set drafting
+      </header>
 
-    <div class="column">
-      <p id="currentPack"></p>
-    </div>
-    
-    <div class="column">
-      <p id="pool"></p>
+      <div class="body">
+        <p id="output"></p>
+
+        <div class="column">
+          <p id="currentPack"></p>
+        </div>
+
+        <div class="column">
+          <p id="pool"></p>
+        </div>
+
+        <div class="clearfix"></div>
+      </div>
     </div>
     
     <script type="application/dart" src="draft.dart"></script>
