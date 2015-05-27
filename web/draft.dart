@@ -78,6 +78,7 @@ void pickCard(Event e) {
   request['pick'] = int.parse((e.target as Element).getAttribute("index"));
   
   querySelector("#currentPack").children.clear();
+  querySelector("#output").text = "Waiting for another pack...";
 
   ws.send(JSON.encode(request));
 }
