@@ -240,6 +240,13 @@ Future<List<Map<String, String>>> generatePack(String shortname) async {
   pack.addAll(await getCardsFrom(shortname, "common", 10));
   pack.addAll(await getCardsFrom(shortname, "special", 1));
   
+  // Add html representations to the cards in the pack.
+  await Future.wait(pack.map(
+    (Map<String, String> card) async {
+      card['html'] = await getCardHtml(card['name']);
+    }
+  ));
+  
   return pack;
 }
 
@@ -254,8 +261,7 @@ Future<List<Map<String, String>>> getCardsFrom(String shortname, String rarity, 
 
   for (int i = 0; i < numCards; ++i) {
     cards.add({"name":cardNames[i],
-               "rarity":rarity,
-               "html":await getCardHtml(cardNames[i])
+               "rarity":rarity
     });
   }
 
