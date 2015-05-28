@@ -166,14 +166,19 @@ class Draft {
     
     _sendAll({"message":"Opening pack ${_currentPack + 1}..."});
     
-    // TODO: This used to use Future.wait(), but one of the futures was somehow
-    // a null object. The current implementation contains a data race, I think,
-    // in the event that someone gets a pack and passes it before the recipient
-    // opens their own pack.
+    // Generate and add all packs before sending any out. This prevents data
+    // races in which someone passes their first pack before someone else
+    // even opens theirs.
+    await Future.wait(_drafters.map(
+      (Drafter drafter) async {
+        drafter.packs.add(await generatePack(supportedSets[_sets[_currentPack]].shortname));
+      }
+    ));
+    
     for (Drafter drafter in _drafters) {
-      drafter.packs.add(await generatePack(supportedSets[_sets[_currentPack]].shortname));
       drafter.sendPack();
     }
+    
     // Then indicate that we've already opened this set of packs, and return.
     ++_currentPack;
   }
