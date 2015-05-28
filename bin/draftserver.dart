@@ -78,6 +78,7 @@ Future requestHandler(HttpRequest request) async {
  * The Maps in these lists represent individual cards and have keys:
  *    name (the name of the card)
  *    rarity (a string: 'common', 'uncommon', 'rare', 'mythic', or 'special')
+ *    html (a string containing an html representation of the card's appearance)
  *    quantity (ONLY FOR POOL; the number of that card in the player's pool)
  * 
  * To join a draft, the client should send a JSON-encoded Map with keys:

@@ -3,9 +3,13 @@ import 'dart:convert';
 import 'package:uuid/uuid.dart';
 import 'package:draft/common/messages.dart';
 
+List<Map<String, String>> pack;
+List<Map<String, String>> pool;
 WebSocket ws;
 
 void main() {
+  pack = new List();
+  pool = new List();
   ws = new WebSocket('ws://${Uri.base.host}:${SERVER_PORT}/ws')
     ..onError.first.then(displayError)
     ..onClose.first.then(displayError)
@@ -32,27 +36,31 @@ void handleMessage(MessageEvent e) {
   }
 
   if (message.containsKey('pack')) {
-    List cards = message['pack'];
-    List<Element> pack = querySelector("#currentPack").children;
-    pack.clear();
-    for (int i = 0; i < cards.length; ++i) {
-      pack.add(getCardLink(cards[i])
-                 ..setAttribute("index", "$i")
-                 ..onClick.listen(pickCard)
-              );
-      pack.add(new Element.br());
+    pack = message['pack'];
+    List<Element> packElements = querySelector("#currentPack").children;
+    packElements.clear();
+    for (int i = 0; i < pack.length; ++i) {
+      packElements.add(getCardLink(pack[i])
+                       ..setAttribute("index", "$i")
+                       ..setAttribute("pack", "true")
+                       ..onClick.listen(pickCard)
+                      );
+      packElements.add(new Element.br());
     }
   }
 
   if (message.containsKey('pool')) {
-    List cards = message['pool'];
-    List<Element> pool = querySelector("#pool").children;
+    pool = message['pool'];
+    List<Element> poolElements = querySelector("#pool").children;
     
-    pool.clear();
-    for (int i = 0; i < cards.length; ++i) {
-      pool.add(new Element.span()..text = "${cards[i]['quantity']} ");
-      pool.add(getCardLink(cards[i]));
-      pool.add(new Element.br());
+    poolElements.clear();
+    for (int i = 0; i < pool.length; ++i) {
+      poolElements.add(new Element.span()..text = "${pool[i]['quantity']} ");
+      poolElements.add(getCardLink(pool[i])
+                       ..setAttribute("index", "$i")
+                       ..setAttribute("pack", "false")
+                      );
+      poolElements.add(new Element.br());
     }
   }
 }
@@ -63,8 +71,7 @@ Element getCardLink(Map card) {
   cardElement.text = card['name'];
   cardElement.setAttribute('class', 'card');
   cardElement.setAttribute('rarity', card['rarity']);
-  
-  // TODO: Autocard.
+  cardElement.onMouseOver.listen(displayAutocard);
 
   return cardElement;
 }
@@ -81,6 +88,24 @@ void pickCard(Event e) {
   querySelector("#output").text = "Waiting for another pack...";
 
   ws.send(JSON.encode(request));
+}
+
+void displayAutocard(Event e) {
+  int index = int.parse((e.target as Element).getAttribute("index"));
+  Element autocard = querySelector("#autocard");
+  
+  String cardHtml = (e.target as Element).getAttribute("pack") == "true" ?
+                    pack[index]['html'] :
+                    pool[index]['html'];
+
+  var validator = new NodeValidatorBuilder()
+    ..allowTextElements()
+    ..allowElement("img", attributes: ["class", "src"])
+    ..allowElement("div", attributes: ["class"])
+    ..allowInlineStyles();
+  
+  autocard.children.clear();
+  autocard.children.add(new Element.html(cardHtml, validator: validator));
 }
 
 String getUserId() {

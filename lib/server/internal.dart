@@ -2,6 +2,7 @@ library draft.internal;
 
 import 'dart:async';
 import 'dart:io';
+import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
 import 'package:draft/common/sets/sets.dart';
 
@@ -163,6 +164,8 @@ class Draft {
       return;
     }
     
+    _sendAll({"message":"Opening pack ${_currentPack + 1}..."});
+    
     // TODO: This used to use Future.wait(), but one of the futures was somehow
     // a null object. The current implementation contains a data race, I think,
     // in the event that someone gets a pack and passes it before the recipient
@@ -251,8 +254,16 @@ Future<List<Map<String, String>>> getCardsFrom(String shortname, String rarity, 
 
   for (int i = 0; i < numCards; ++i) {
     cards.add({"name":cardNames[i],
-               "rarity":rarity});
+               "rarity":rarity,
+               "html":await getCardHtml(cardNames[i])
+    });
   }
 
   return cards;
+}
+
+// Gets the HTML representation of the named card.
+// TODO: Caching.
+Future<String> getCardHtml(String cardName) async {
+  return (await http.get("http://forum.nogoblinsallowed.com/view_card.php?view=render&name=${cardName}")).body;
 }
