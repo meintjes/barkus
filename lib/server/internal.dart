@@ -2,6 +2,7 @@ library draft.internal;
 
 import 'dart:async';
 import 'dart:io';
+import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
 import 'package:draft/common/sets/sets.dart';
 
@@ -163,14 +164,21 @@ class Draft {
       return;
     }
     
-    // TODO: This used to use Future.wait(), but one of the futures was somehow
-    // a null object. The current implementation contains a data race, I think,
-    // in the event that someone gets a pack and passes it before the recipient
-    // opens their own pack.
+    _sendAll({"message":"Opening pack ${_currentPack + 1}..."});
+    
+    // Generate and add all packs before sending any out. This prevents data
+    // races in which someone passes their first pack before someone else
+    // even opens theirs.
+    await Future.wait(_drafters.map(
+      (Drafter drafter) async {
+        drafter.packs.add(await generatePack(supportedSets[_sets[_currentPack]].shortname));
+      }
+    ));
+    
     for (Drafter drafter in _drafters) {
-      drafter.packs.add(await generatePack(supportedSets[_sets[_currentPack]].shortname));
       drafter.sendPack();
     }
+    
     // Then indicate that we've already opened this set of packs, and return.
     ++_currentPack;
   }
@@ -237,6 +245,13 @@ Future<List<Map<String, String>>> generatePack(String shortname) async {
   pack.addAll(await getCardsFrom(shortname, "common", 10));
   pack.addAll(await getCardsFrom(shortname, "special", 1));
   
+  // Add html representations to the cards in the pack.
+  await Future.wait(pack.map(
+    (Map<String, String> card) async {
+      card['html'] = await getCardHtml(card['name']);
+    }
+  ));
+  
   return pack;
 }
 
@@ -251,8 +266,21 @@ Future<List<Map<String, String>>> getCardsFrom(String shortname, String rarity, 
 
   for (int i = 0; i < numCards; ++i) {
     cards.add({"name":cardNames[i],
-               "rarity":rarity});
+               "rarity":rarity
+    });
   }
 
   return cards;
+}
+
+// Gets the HTML representation of the named card.
+// TODO: Caching.
+Future<String> getCardHtml(String cardName) async {
+  // Replace characters from card names that aren't safe for URLs.
+  String safeCardName = cardName.replaceAllMapped(new RegExp(r'[ ~[\]]'), 
+    (Match m) {
+      return "%" + m.group(0).runes.first.toRadixString(16);
+    }
+  );
+  return (await http.get("http://forum.nogoblinsallowed.com/view_card.php?view=render&name=${safeCardName}")).body;
 }

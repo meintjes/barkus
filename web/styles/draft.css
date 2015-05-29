@@ -1,6 +1,6 @@
 .column {
   float: left;
-  width: 50%;
+  width: 33.3%;
 }
 
 .card {
@@ -68,4 +68,8 @@
   background: -ms-linear-gradient(top,  #ff6600 0%,#ff6600 45%,#ee5500 55%,#ee5500 100%); /* IE10+ */
   background: linear-gradient(to bottom,  #ff6600 0%,#ff6600 45%,#ee5500 55%,#ee5500 100%); /* W3C */
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff6600', endColorstr='#ee5500',GradientType=0 ); /* IE6-9 */
+}
+
+#autocard {
+  font-family: "Lucida Grande","Trebuchet MS",Helvetica,Arial,sans-serif;
 }
