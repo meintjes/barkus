@@ -1,11 +1,24 @@
-.column {
-  float: left;
-  width: 33.3%;
+.draft-container {
+  display: flex;
+}
+
+.draft-column {
+  flex: 1 1;
+}
+
+#autocard {
+  /* 224px + right padding */
+  flex: 0 0 254px;
+  font-family: "Lucida Grande","Trebuchet MS",Helvetica,Arial,sans-serif;
 }
 
 .card {
   cursor: pointer;
   display: inline-block;
+  -webkit-user-select: none;  /* Chrome all / Safari all */
+  -moz-user-select: none;     /* Firefox all */
+  -ms-user-select: none;      /* IE 10+ */
+
 
   padding: 3px 5px;
 
@@ -68,8 +81,4 @@
   background: -ms-linear-gradient(top,  #ff6600 0%,#ff6600 45%,#ee5500 55%,#ee5500 100%); /* IE10+ */
   background: linear-gradient(to bottom,  #ff6600 0%,#ff6600 45%,#ee5500 55%,#ee5500 100%); /* W3C */
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff6600', endColorstr='#ee5500',GradientType=0 ); /* IE6-9 */
-}
-
-#autocard {
-  font-family: "Lucida Grande","Trebuchet MS",Helvetica,Arial,sans-serif;
 }
