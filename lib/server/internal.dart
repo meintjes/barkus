@@ -276,5 +276,11 @@ Future<List<Map<String, String>>> getCardsFrom(String shortname, String rarity, 
 // Gets the HTML representation of the named card.
 // TODO: Caching.
 Future<String> getCardHtml(String cardName) async {
-  return (await http.get("http://forum.nogoblinsallowed.com/view_card.php?view=render&name=${cardName}")).body;
+  // Replace characters from card names that aren't safe for URLs.
+  String safeCardName = cardName.replaceAllMapped(new RegExp(r'[ ~[\]]'), 
+    (Match m) {
+      return "%" + m.group(0).runes.first.toRadixString(16);
+    }
+  );
+  return (await http.get("http://forum.nogoblinsallowed.com/view_card.php?view=render&name=${safeCardName}")).body;
 }
