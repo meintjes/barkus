@@ -10,8 +10,6 @@ DraftApi api;
 
 void main() {
   api = new DraftApi(client, rootUrl: "${window.location.protocol}//${window.location.hostname}:$SERVER_PORT/");
-  print("Connecting to:");
-  print("${window.location.protocol}//${window.location.hostname}:$SERVER_PORT/");
   
   for (var elem in querySelectorAll("#pack")) {
     for (CardSet set in supportedSets) {

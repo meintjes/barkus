@@ -15,6 +15,7 @@ Random random = new Random();
 
 final int DRAFTERS_TO_START = 1;
 final int PACKS = 3;
+final Duration DELETION_TIME = new Duration(seconds: 90);
 
 // A map of draft IDs onto the Draft objects themselves.
 Map<String, Draft> drafts = new Map<String, Draft>();
@@ -51,7 +52,6 @@ class Draft {
       Drafter drafter = _getDrafter(user);
       if (drafter == null) {
         sendState({"message":"That draft has already started!"});
-        throw new Exception("Tried to join an already-started draft.");
       }
       // If the user is already in the draft and is reconnecting, update their
       // sendState function to send to the new WebSocket. Then send them all
@@ -62,6 +62,10 @@ class Draft {
         drafter.sendPool();
       }
     }
+    // If a user successfully joined or reconnected, stop the draft from being
+    // deleted. This code will not be reached if a non-drafter tries to join an
+    // already-started draft.
+    _cancelDeletion();
   }
   
   // Removes the given user from the draft queue. If the draft has already
@@ -76,7 +80,7 @@ class Draft {
       _getDrafter(user).sendState = null;
     }
     
-    _scheduleDelete();
+    _scheduleDeletion();
   }
   
   // Picks the card of the given index for the given user.
@@ -139,20 +143,27 @@ class Draft {
       }
     }
     
-    _scheduleDelete();
+    _scheduleDeletion();
   }
   
   // Schedules a draft to be deleted if it has no connected players. Call this
   // when creating the draft and when a player leaves the draft.
-  void _scheduleDelete() {
+  void _scheduleDeletion() {
     if (_usersConnected == 0) {
-      new Timer(new Duration(seconds: 90),
+      _deletionTimer = new Timer(DELETION_TIME,
         () {
-          if (_usersConnected == 0) {
-            drafts.remove(_id);
-          }
+          drafts.remove(_id);
         }
       );
+    }
+  }
+  
+  // If the draft is scheduled to be deleted, unschedule it. Call this when
+  // players join the draft.
+  void _cancelDeletion() {
+    if (_deletionTimer != null) {
+      _deletionTimer.cancel();
+      _deletionTimer = null;
     }
   }
   
@@ -183,10 +194,7 @@ class Draft {
     }
     
     _sendAll({"message":"Opening pack ${_currentPack + 1}..."});
-    
-    // Generate and add all packs before sending any out. This prevents data
-    // races in which someone passes their first pack before someone else
-    // even opens theirs.
+
     await Future.wait(_drafters.map(
       (Drafter drafter) async {
         drafter.packs.add(await generatePack(supportedSets[_sets[_currentPack]].shortname));
@@ -225,6 +233,7 @@ class Draft {
   bool _hasStarted;
   int _currentPack;
   String _id;
+  Timer _deletionTimer;
 }
 
 class Drafter {

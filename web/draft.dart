@@ -77,7 +77,7 @@ Element getCardLink(Map card) {
 }
 
 void displayError(Event e) {
-  querySelector("#output").text = "You are not connected to the server. Please refresh the page.";
+  querySelector("#output").text = "You are not connected. Perhaps there was a server error, or you're trying to join an expired or invalid draft.";
 }
 
 void pickCard(Event e) {
