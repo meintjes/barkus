@@ -5,7 +5,7 @@ import 'package:draft/common/sets/sets.dart';
 import 'package:draft/client/draftapi.dart';
 import 'package:http/browser_client.dart';
 
-final String serverUrl = 'localhost:8088/';
+final String serverUrl = 'localhost:${SERVER_PORT}/';
 final BrowserClient client = new BrowserClient();
 DraftApi api;
 

@@ -26,7 +26,7 @@ String create(List<int> sets) {
     id = uuid.v4();
   } while (drafts.containsKey(id));
 
-  drafts[id] = new Draft(sets);
+  drafts[id] = new Draft(sets, id);
 
   return id;
 }
@@ -75,8 +75,10 @@ class Draft {
     else {
       _getDrafter(user).sendState = null;
     }
+    
+    _scheduleDelete();
   }
-
+  
   // Picks the card of the given index for the given user.
   void pick(String user, int pick) {
     // Add the picked card to the user's pool and remove it from the pack.
@@ -116,13 +118,13 @@ class Draft {
 
     // If everyone is out of cards to pick, open the next pack. 
     if (_drafters.every((Drafter drafter) => drafter.packs.isEmpty)) {
-      openPacks();
+      _openPacks();
     }
   }
 
 
 
-  Draft(this._sets) :
+  Draft(this._sets, this._id) :
     _drafters = new List<Drafter>(),
     _hasStarted = false,
     _currentPack = 0
@@ -135,6 +137,22 @@ class Draft {
       if (set < 0 || set >= supportedSets.length) {
         throw new Exception("Invalid set specified: ${set}");
       }
+    }
+    
+    _scheduleDelete();
+  }
+  
+  // Schedules a draft to be deleted if it has no connected players. Call this
+  // when creating the draft and when a player leaves the draft.
+  void _scheduleDelete() {
+    if (_usersConnected == 0) {
+      new Timer(new Duration(seconds: 90),
+        () {
+          if (_usersConnected == 0) {
+            drafts.remove(_id);
+          }
+        }
+      );
     }
   }
   
@@ -154,11 +172,11 @@ class Draft {
       _drafters[i].index = i;
     }
     
-    openPacks();
+    _openPacks();
   }
   
   // Causes each player to open the next pack.
-  Future openPacks() async {
+  Future _openPacks() async {
     if (_currentPack >= _sets.length) {
       _sendAll({"message":"All cards have been picked."});
       return;
@@ -196,11 +214,17 @@ class Draft {
       }
     }    
   }
+  
+  // Gets the number of drafters that are still connected to the draft.
+  int get _usersConnected {
+    return _drafters.where((Drafter drafter) => drafter.sendState != null).length;
+  }
 
   List<Drafter> _drafters;
   List<int> _sets;
   bool _hasStarted;
   int _currentPack;
+  String _id;
 }
 
 class Drafter {

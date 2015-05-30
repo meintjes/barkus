@@ -1,6 +1,6 @@
 library draft.messages;
 
-final int SERVER_PORT = 8088;
+const int SERVER_PORT = 80;
 
 /**
  * Classes used for HTTP messages in draft creation.
