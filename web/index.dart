@@ -5,13 +5,13 @@ import 'package:draft/common/sets/sets.dart';
 import 'package:draft/client/draftapi.dart';
 import 'package:http/browser_client.dart';
 
-final String serverUrl = 'localhost:${SERVER_PORT}/';
 final BrowserClient client = new BrowserClient();
 DraftApi api;
 
 void main() {
-  var protocol = window.location.protocol;
-  api = new DraftApi(client, rootUrl: "$protocol//$serverUrl");
+  api = new DraftApi(client, rootUrl: "${window.location.protocol}//${window.location.hostname}:$SERVER_PORT/");
+  print("Connecting to:");
+  print("${window.location.protocol}//${window.location.hostname}:$SERVER_PORT/");
   
   for (var elem in querySelectorAll("#pack")) {
     for (CardSet set in supportedSets) {
