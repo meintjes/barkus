@@ -37,9 +37,9 @@ class Draft {
   // Adds the given user to the draft queue if it hasn't started yet. endState
   // is a callback, used by the Draft to send messages to clients. The format
   // is explained in draftserver.dart.
-  void join(String user, SendStateFunc sendState) {
+  void join(String user, String name, SendStateFunc sendState) {
     if (!_hasStarted) {
-      _drafters.add(new Drafter(user, sendState));
+      _drafters.add(new Drafter(user, name, sendState));
       if (_drafters.length == DRAFTERS_TO_START) {
         _start();
       }
@@ -52,14 +52,17 @@ class Draft {
       Drafter drafter = _getDrafter(user);
       if (drafter == null) {
         sendState({"message":"That draft has already started!"});
+        return;
       }
       // If the user is already in the draft and is reconnecting, update their
       // sendState function to send to the new WebSocket. Then send them all
       // the information they might be missing.
       else {
+        drafter.name = name;
         drafter.sendState = sendState;
         drafter.sendPack();
         drafter.sendPool();
+        _sendTableInfo();
       }
     }
     // If a user successfully joined or reconnected, stop the draft from being
@@ -78,6 +81,7 @@ class Draft {
     }
     else {
       _getDrafter(user).sendState = null;
+      _sendTableInfo();
     }
     
     _scheduleDeletion();
@@ -124,6 +128,13 @@ class Draft {
     if (_drafters.every((Drafter drafter) => drafter.packs.isEmpty)) {
       _openPacks();
     }
+    
+    _sendTableInfo();
+  }
+  
+  void rename(String id, String newName) {
+    Drafter drafter = _getDrafter(id);
+    drafter.name = newName;
   }
 
 
@@ -167,11 +178,6 @@ class Draft {
     }
   }
   
-  // Sends a message to all users waiting.
-  void _sendWaitingMessage() {
-    _sendAll({"message":"Waiting for draft to start: ${_drafters.length}/${DRAFTERS_TO_START} users connected."});
-  }
-  
   // Starts the draft. The list of users will be locked in and shuffled, and
   // users will start receiving packs to pick from.
   void _start() {
@@ -195,15 +201,18 @@ class Draft {
     
     _sendAll({"message":"Opening pack ${_currentPack + 1}..."});
 
+    // Generate packs asynchronously because it takes a long time.
     await Future.wait(_drafters.map(
       (Drafter drafter) async {
         drafter.packs.add(await generatePack(supportedSets[_sets[_currentPack]].shortname));
       }
     ));
     
+    // Send everyone their packs, and update pack location information.
     for (Drafter drafter in _drafters) {
       drafter.sendPack();
     }
+    _sendTableInfo();
     
     // Then indicate that we've already opened this set of packs, and return.
     ++_currentPack;
@@ -223,6 +232,34 @@ class Draft {
     }    
   }
   
+  
+  // Sends a message to all users waiting.
+  void _sendWaitingMessage() {
+    _sendAll({"message":"Waiting for draft to start: ${_drafters.length}/${DRAFTERS_TO_START} users connected."});
+  }
+  
+  // Sends information to all players about where packs are.
+  void _sendTableInfo() {
+    List<Map> message = new List<Map>();
+    for (Drafter drafter in _drafters) {
+      String status = drafter.sendState != null ?
+                      "connected" :
+                      "disconnected";
+      message.add({"name":drafter.name,
+                   "packs":drafter.packs.length,
+                   "status":status});
+    }
+    
+    // TODO remove this testing code
+    for (int i = 0; i < 6; ++i) {
+      message.add({"name":"evil pack hoarder",
+                   "packs":9001,
+                   "status":"disconnected"});
+    }
+    
+    _sendAll({"table":message});
+  }
+  
   // Gets the number of drafters that are still connected to the draft.
   int get _usersConnected {
     return _drafters.where((Drafter drafter) => drafter.sendState != null).length;
@@ -239,11 +276,12 @@ class Draft {
 class Drafter {
   int index;
   String id;
+  String name;
   SendStateFunc sendState;
   List<List<Map<String, String>>> packs;
   List<Map<String, String>> pool;
 
-  Drafter(this.id, this.sendState) :
+  Drafter(this.id, this.name, this.sendState) :
     index = -55,
     packs = new List<List<Map<String, String>>>(),
     pool = new List<Map<String, String>>()

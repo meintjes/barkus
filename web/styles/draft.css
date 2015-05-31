@@ -2,6 +2,10 @@
   display: flex;
 }
 
+.player-name[status=disconnected] {
+  color: red;
+}
+
 .draft-column {
   flex: 1 1;
 }

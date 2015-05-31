@@ -20,6 +20,7 @@ void onConnected(Event e) {
   // Send user ID and pod ID to server so they add us to the draft.
   Map request = new Map();
   request['user'] = getUserId();
+  request['name'] = getUserName();
   request['pod'] = getPodId();
   ws.send(JSON.encode(request));
 
@@ -34,10 +35,14 @@ void handleMessage(MessageEvent e) {
   if (message.containsKey('message')) {
     querySelector("#output").text = message['message'];
   }
+  
+  if (message.containsKey('table')) {
+    displayTableInfo(message['table']);
+  }
 
   if (message.containsKey('pack')) {
     pack = message['pack'];
-    List<Element> packElements = querySelector("#currentPack").children;
+    List<Element> packElements = querySelector("#current-pack").children;
     packElements.clear();
     for (int i = 0; i < pack.length; ++i) {
       packElements.add(getCardLink(pack[i])
@@ -65,6 +70,34 @@ void handleMessage(MessageEvent e) {
   }
 }
 
+void displayTableInfo(List table) {
+  List<Element> left = querySelector("#table-left").children;
+  List<Element> right = querySelector("#table-right").children;
+  left.clear();
+  right.clear();
+  for (int i = 0; i < table.length; ++i) {
+    Element name = new Element.span()
+                      ..setAttribute("class", "player-name")
+                      ..setAttribute("status", table[i]['status'])
+                      ..text = table[i]['name'];
+    Element packs = new Element.span()
+                      ..setAttribute("class", "player-packs")
+                      ..text = "${table[i]['packs']}";
+
+    Element entry = new Element.div();
+    if (i <= table.length ~/ 2) {
+      entry.children.add(name);
+      entry.children.add(packs);
+      left.add(entry);
+    }
+    else {
+      entry.children.add(packs);
+      entry.children.add(name);
+      right.add(entry);
+    }
+  }
+}
+
 // Returns a link to the specified card.
 Element getCardLink(Map card) {
   Element cardElement = new Element.span();
@@ -84,7 +117,7 @@ void pickCard(Event e) {
   Map request = new Map();
   request['pick'] = int.parse((e.target as Element).getAttribute("index"));
   
-  querySelector("#currentPack").children.clear();
+  querySelector("#current-pack").children.clear();
   querySelector("#output").text = "Waiting for another pack...";
 
   ws.send(JSON.encode(request));
@@ -113,6 +146,13 @@ String getUserId() {
     window.localStorage['id'] = new Uuid().v4();
   }
   return window.localStorage['id'];
+}
+
+String getUserName() {
+  if (!window.localStorage.containsKey('name')) {
+    window.localStorage['name'] = "Goblin";
+  }
+  return window.localStorage['name'];  
 }
 
 String getPodId() {
