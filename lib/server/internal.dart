@@ -265,7 +265,14 @@ class Draft {
                    "status":"disconnected"});
     }
     
-    _sendAll({"table":message});
+    for (int i = 0; i < _drafters.length; ++i) {
+      // Each player sees themselves with status "you".
+      if (_drafters[i].sendState != null) {
+        message[i]['status'] = "you";
+        _drafters[i].sendState({"table":message});
+        message[i]['status'] = "connected"; // We already know sendState != null.
+      }
+    }
   }
   
   // Gets the number of drafters that are still connected to the draft.

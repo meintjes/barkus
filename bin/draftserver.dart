@@ -79,7 +79,7 @@ Future requestHandler(HttpRequest request) async {
  * The Maps in 'table' have keys:
  *    name (a string, the player's name)
  *    packs (an int, the number of packs that player is holding)
- *    status ("connected" or "disconnected")
+ *    status ("connected" or "disconnected" or "you")
  * The Maps in 'pack' and 'pool' represent individual cards and have keys:
  *    name (a string: the name of the card)
  *    rarity (a string: 'common', 'uncommon', 'rare', 'mythic', or 'special')
@@ -87,7 +87,7 @@ Future requestHandler(HttpRequest request) async {
  *    quantity (ONLY FOR POOL; the number of that card in the player's pool)
  * 
  * To join a draft, the client should send a JSON-encoded Map with keys:
- *    user (a string uniquely identifying the user)
+ *    id (a string uniquely identifying the user)
  *    name (a string identifying the user in a human-readable way)
  *    pod (the string which identifies the pod the user is making a pick for)
  * To make a pick, the client should send a JSON-encoded Map with keys:
@@ -102,8 +102,8 @@ Future listenToWebSocket(WebSocket ws) async {
   await for (String json in ws) {
     try {
       Map message = JSON.decode(json);
-      if (message.containsKey('user') && message.containsKey('name') && message.containsKey('pod')) {
-        userId = message['user'];
+      if (message.containsKey('id') && message.containsKey('name') && message.containsKey('pod')) {
+        userId = message['id'];
         draft = internal.drafts[message['pod']];
         draft.join(userId, message['name'], (Map map) => ws.add(JSON.encode(map)));
       }

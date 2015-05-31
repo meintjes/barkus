@@ -15,6 +15,15 @@
   font-weight: bold;
 }
 
+.player-name[status=you] {
+  cursor: pointer;
+  background-color: #dcdcdc;
+}
+
+.player-name[status=you]:hover {
+  background-color: #e4e4e4;
+}
+
 .player-name[status=disconnected] {
   color: red;
 }

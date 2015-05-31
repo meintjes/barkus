@@ -10,6 +10,7 @@ WebSocket ws;
 void main() {
   pack = new List();
   pool = new List();
+  querySelector("#rename").onClick.listen(rename);
   ws = new WebSocket('ws://${Uri.base.host}:${SERVER_PORT}/ws')
     ..onError.first.then(displayError)
     ..onClose.first.then(displayError)
@@ -19,7 +20,7 @@ void main() {
 void onConnected(Event e) {
   // Send user ID and pod ID to server so they add us to the draft.
   Map request = new Map();
-  request['user'] = getUserId();
+  request['id'] = getUserId();
   request['name'] = getUserName();
   request['pod'] = getPodId();
   ws.send(JSON.encode(request));
@@ -76,13 +77,17 @@ void displayTableInfo(List table) {
   left.clear();
   right.clear();
   for (int i = 0; i < table.length; ++i) {
-    Element name = new Element.td()
-                      ..setAttribute("class", "player-name")
-                      ..setAttribute("status", table[i]['status'])
-                      ..text = table[i]['name'];
-    Element packs = new Element.td()
+    Element name = new Element.td()..children.add(
+                     new Element.span()
+                     ..setAttribute("class", "player-name")
+                     ..setAttribute("status", table[i]['status'])
+                     ..text = table[i]['name']
+                   );
+    Element packs = new Element.td()..children.add(
+                      new Element.span()
                       ..setAttribute("class", "player-packs")
-                      ..text = "${table[i]['packs']}";
+                      ..text = "${table[i]['packs']}"
+                    );
 
     Element entry = new Element.tr();
     if (i <= table.length ~/ 2) {
@@ -93,9 +98,17 @@ void displayTableInfo(List table) {
     else {
       entry.children.add(packs);
       entry.children.add(name);
-      right.add(entry);
+      right.insert(0, entry);
     }
   }
+  querySelector(".player-name[status=you]").onClick.first.then((Event e) => querySelector("#rename-form").hidden = false);
+}
+
+void rename(Event e) {
+  String newName = (querySelector("#new-name") as InputElement).value;
+  window.localStorage['name'] = newName;
+  ws.send(JSON.encode({"name":newName}));
+  querySelector("#rename-form").hidden = true;
 }
 
 // Returns a link to the specified card.
