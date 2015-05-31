@@ -303,9 +303,12 @@ class Drafter {
   {}
   
   void setName(String newName) {
-    name = newName;
+    name = newName.trim();
     if (name.length > MAX_NAME_LENGTH) {
       name = name.substring(0, MAX_NAME_LENGTH);
+    }
+    else if (name.length == 0) {
+      name = "Goblin";
     }
   }
   

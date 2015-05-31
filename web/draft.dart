@@ -10,7 +10,7 @@ WebSocket ws;
 void main() {
   pack = new List();
   pool = new List();
-  querySelector("#rename").onClick.listen(rename);
+  querySelector("#rename-form").onSubmit.listen(rename);
   ws = new WebSocket('ws://${Uri.base.host}:${SERVER_PORT}/ws')
     ..onError.first.then(displayError)
     ..onClose.first.then(displayError)
@@ -109,6 +109,7 @@ void rename(Event e) {
   window.localStorage['name'] = newName;
   ws.send(JSON.encode({"name":newName}));
   querySelector("#rename-form").hidden = true;
+  e.preventDefault();
 }
 
 // Returns a link to the specified card.
@@ -163,7 +164,7 @@ String getUserId() {
 
 String getUserName() {
   if (!window.localStorage.containsKey('name')) {
-    window.localStorage['name'] = "Goblin";
+    window.localStorage['name'] = "";
   }
   return window.localStorage['name'];  
 }
