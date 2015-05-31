@@ -13,8 +13,9 @@ typedef void SendStateFunc(Map state);
 Uuid uuid = new Uuid();
 Random random = new Random();
 
-final int DRAFTERS_TO_START = 1;
-final int PACKS = 3;
+const int DRAFTERS_TO_START = 1;
+const int PACKS = 3;
+const int MAX_NAME_LENGTH = 20;
 final Duration DELETION_TIME = new Duration(seconds: 90);
 
 // A map of draft IDs onto the Draft objects themselves.
@@ -37,9 +38,16 @@ class Draft {
   // Adds the given user to the draft queue if it hasn't started yet. endState
   // is a callback, used by the Draft to send messages to clients. The format
   // is explained in draftserver.dart.
-  void join(String user, String name, SendStateFunc sendState) {
+  void join(String id, String name, SendStateFunc sendState) {
+    Drafter drafter = _getDrafter(id);
+    // Don't let the same user join the draft twice. 
+    if (drafter != null && drafter.sendState != null) {
+      sendState({"message":"You are already connected to this draft."});
+      return;
+    }
+
     if (!_hasStarted) {
-      _drafters.add(new Drafter(user, name, sendState));
+      _drafters.add(new Drafter(id, sendState)..setName(name));
       if (_drafters.length == DRAFTERS_TO_START) {
         _start();
       }
@@ -49,7 +57,6 @@ class Draft {
     }
     else {
       // If the user isn't in the draft, tell them it started.
-      Drafter drafter = _getDrafter(user);
       if (drafter == null) {
         sendState({"message":"That draft has already started!"});
         return;
@@ -58,8 +65,8 @@ class Draft {
       // sendState function to send to the new WebSocket. Then send them all
       // the information they might be missing.
       else {
-        drafter.name = name;
         drafter.sendState = sendState;
+        drafter.setName(name);
         drafter.sendPack();
         drafter.sendPool();
         _sendTableInfo();
@@ -134,7 +141,8 @@ class Draft {
   
   void rename(String id, String newName) {
     Drafter drafter = _getDrafter(id);
-    drafter.name = newName;
+    drafter.setName(newName);
+    _sendTableInfo();
   }
 
 
@@ -253,7 +261,7 @@ class Draft {
     // TODO remove this testing code
     for (int i = 0; i < 6; ++i) {
       message.add({"name":"evil pack hoarder",
-                   "packs":9001,
+                   "packs":8,
                    "status":"disconnected"});
     }
     
@@ -281,11 +289,18 @@ class Drafter {
   List<List<Map<String, String>>> packs;
   List<Map<String, String>> pool;
 
-  Drafter(this.id, this.name, this.sendState) :
+  Drafter(this.id, this.sendState) :
     index = -55,
     packs = new List<List<Map<String, String>>>(),
     pool = new List<Map<String, String>>()
   {}
+  
+  void setName(String newName) {
+    name = newName;
+    if (name.length > MAX_NAME_LENGTH) {
+      name = name.substring(0, MAX_NAME_LENGTH);
+    }
+  }
   
   void sendPack() {
     if (sendState != null && packs.isNotEmpty) {

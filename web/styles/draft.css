@@ -2,6 +2,14 @@
   display: flex;
 }
 
+#table-left {
+  text-align: right;
+}
+
+.player-packs {
+  font-weight: bold;
+}
+
 .player-name[status=disconnected] {
   color: red;
 }

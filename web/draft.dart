@@ -76,15 +76,15 @@ void displayTableInfo(List table) {
   left.clear();
   right.clear();
   for (int i = 0; i < table.length; ++i) {
-    Element name = new Element.span()
+    Element name = new Element.td()
                       ..setAttribute("class", "player-name")
                       ..setAttribute("status", table[i]['status'])
                       ..text = table[i]['name'];
-    Element packs = new Element.span()
+    Element packs = new Element.td()
                       ..setAttribute("class", "player-packs")
                       ..text = "${table[i]['packs']}";
 
-    Element entry = new Element.div();
+    Element entry = new Element.tr();
     if (i <= table.length ~/ 2) {
       entry.children.add(name);
       entry.children.add(packs);
