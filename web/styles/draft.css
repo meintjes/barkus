@@ -1,5 +1,10 @@
-.draft-container {
+.player-container {
   display: flex;
+  justify-content: center;
+}
+
+.player-table {
+  flex: none;
 }
 
 #table-left {
@@ -12,6 +17,10 @@
 
 .player-name[status=disconnected] {
   color: red;
+}
+
+.draft-container {
+  display: flex;
 }
 
 .draft-column {

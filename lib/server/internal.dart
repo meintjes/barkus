@@ -15,7 +15,7 @@ Random random = new Random();
 
 const int DRAFTERS_TO_START = 1;
 const int PACKS = 3;
-const int MAX_NAME_LENGTH = 20;
+const int MAX_NAME_LENGTH = 32;
 final Duration DELETION_TIME = new Duration(seconds: 90);
 
 // A map of draft IDs onto the Draft objects themselves.

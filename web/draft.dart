@@ -33,7 +33,7 @@ void handleMessage(MessageEvent e) {
   Map message = JSON.decode(e.data);
   
   if (message.containsKey('message')) {
-    querySelector("#output").text = message['message'];
+    querySelector("#message").text = message['message'];
   }
   
   if (message.containsKey('table')) {
@@ -110,7 +110,7 @@ Element getCardLink(Map card) {
 }
 
 void displayError(Event e) {
-  querySelector("#output").text = "You are not connected. Perhaps there was a server error, or you're trying to join an expired or invalid draft.";
+  querySelector("#message").text = "You are not connected. Perhaps there was a server error, or you're trying to join an expired or invalid draft.";
 }
 
 void pickCard(Event e) {
@@ -118,7 +118,7 @@ void pickCard(Event e) {
   request['pick'] = int.parse((e.target as Element).getAttribute("index"));
   
   querySelector("#current-pack").children.clear();
-  querySelector("#output").text = "Waiting for another pack...";
+  querySelector("#message").text = "Waiting for another pack...";
 
   ws.send(JSON.encode(request));
 }
