@@ -101,13 +101,16 @@ void displayTableInfo(List table) {
       right.insert(0, entry);
     }
   }
-  querySelector(".player-name[status=you]").onClick.first.then((Event e) => querySelector("#rename-form").hidden = false);
+  querySelector(".player-name[status=you]").onClick.listen((Event e) => querySelector("#rename-form").hidden = false);
 }
 
 void rename(Event e) {
-  String newName = (querySelector("#new-name") as InputElement).value;
-  window.localStorage['name'] = newName;
-  ws.send(JSON.encode({"name":newName}));
+  InputElement input = querySelector("#new-name");
+  if (input.value != "") {
+    window.localStorage['name'] = input.value;
+    ws.send(JSON.encode({"name":input.value}));
+    input.value = "";
+  }
   querySelector("#rename-form").hidden = true;
   e.preventDefault();
 }

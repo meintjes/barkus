@@ -25,7 +25,7 @@ Wanted Man
 Bloodfin Marauder
 Cost of Success
 Covetous Heir
-Garotte Strangler
+Garrote Strangler
 Holdup
 Lethargic Fleshbag
 Loan Shark
@@ -49,7 +49,7 @@ Worthless Loot
 Bloodbite Latrocide
 Bushjumper
 Consume
-Fight of Valuables
+Fight for Valuables
 Hoard
 Overseas Shipping
 Poisonfang Recruit
@@ -58,7 +58,7 @@ Raw Deal
 Rumors of Might
 Scrap Collector
 Stranger with Presents
-Artifical Plowbeast
+Artificial Plowbeast
 Bloodstained Hatchet
 Makeshift Troops
 Mechanical Avenger

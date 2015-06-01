@@ -3,7 +3,7 @@ Final Clue
 Guarded Memorial
 Mob Enforcer
 Public Outcry
-Rank and File
+Rank and File [BST]
 Wall of Omens
 Apprentice Acrobat
 Case Closed
@@ -15,7 +15,7 @@ Sound Strategist
 Boss Meeting
 Corpse Traders
 Innocent Blood
-Perfect Crime
+Perfect Crime [BST]
 Slithering Graverobber
 Suspicious Citizen
 Vindictive Capo
