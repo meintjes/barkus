@@ -13,7 +13,7 @@ typedef void SendStateFunc(Map state);
 Uuid uuid = new Uuid();
 Random random = new Random();
 
-const int DRAFTERS_TO_START = 1;
+const int DRAFTERS_TO_START = 8;
 const int PACKS = 3;
 const int MAX_NAME_LENGTH = 32;
 final Duration DELETION_TIME = new Duration(seconds: 90);
@@ -256,13 +256,6 @@ class Draft {
       message.add({"name":drafter.name,
                    "packs":drafter.packs.length,
                    "status":status});
-    }
-    
-    // TODO remove this testing code
-    for (int i = 0; i < 6; ++i) {
-      message.add({"name":"evil pack hoarder",
-                   "packs":8,
-                   "status":"disconnected"});
     }
     
     for (int i = 0; i < _drafters.length; ++i) {
