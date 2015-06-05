@@ -90,7 +90,7 @@ void displayTableInfo(List table) {
                     );
 
     Element entry = new Element.tr();
-    if (i <= table.length ~/ 2) {
+    if (i < (table.length + 1) ~/ 2) {
       entry.children.add(name);
       entry.children.add(packs);
       left.add(entry);
