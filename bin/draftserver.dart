@@ -121,17 +121,19 @@ Future listenToWebSocket(WebSocket ws) async {
     catch (error) {
       // If we get a bad request, close the connection.
       print("Invalid WebSocket request: ${error.toString()}");
-      if (draft != null) {
-        draft.leave(userId);
-      }
       ws.close();
-      return null;
+      break;
     }
   }
 
-  // When the user closes the connection, try to leave the draft.
+  // When we (or the user) close the connection, remove them from the draft.
   if (draft != null) {
-    draft.leave(userId);
+    try {
+        draft.leave(userId);
+    }
+    catch (error) {
+      print("Failed to leave draft: ${error.toString()}");
+    }
   }
 
 }
