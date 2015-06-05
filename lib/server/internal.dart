@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
 import 'package:draft/common/sets/sets.dart';
+import 'package:draft/common/messages.dart';
 
 // TODO: Is this good randomness?
 import 'dart:math';
@@ -13,7 +14,6 @@ typedef void SendStateFunc(Map state);
 Uuid uuid = new Uuid();
 Random random = new Random();
 
-const int DRAFTERS_TO_START = 8;
 const int PACKS = 3;
 const int MAX_NAME_LENGTH = 32;
 final Duration DELETION_TIME = new Duration(seconds: 90);
@@ -22,13 +22,13 @@ final Duration DELETION_TIME = new Duration(seconds: 90);
 Map<String, Draft> drafts = new Map<String, Draft>();
 
 // Creates a draft with a unique ID. Returns that ID.
-String create(List<int> sets) {  
+String create(List<int> sets, int drafters) {  
   String id;
   do {
     id = uuid.v4();
   } while (drafts.containsKey(id));
-
-  drafts[id] = new Draft(sets, id);
+  
+  drafts[id] = new Draft(sets, drafters, id);
 
   return id;
 }
@@ -48,7 +48,7 @@ class Draft {
 
     if (!_hasStarted) {
       _drafters.add(new Drafter(id, sendState)..setName(name));
-      if (_drafters.length == DRAFTERS_TO_START) {
+      if (_drafters.length == _draftersToStart) {
         _start();
       }
       else {
@@ -147,7 +147,7 @@ class Draft {
 
 
 
-  Draft(this._sets, this._id) :
+  Draft(this._sets, this._draftersToStart, this._id) :
     _drafters = new List<Drafter>(),
     _hasStarted = false,
     _currentPack = 0
@@ -160,6 +160,10 @@ class Draft {
       if (set < 0 || set >= supportedSets.length) {
         throw new Exception("Invalid set specified: ${set}");
       }
+    }
+    
+    if (_draftersToStart < MIN_DRAFTERS || _draftersToStart > MAX_DRAFTERS) {
+      throw new Exception("${_draftersToStart} drafters does not fall within range ${MIN_DRAFTERS}, ${MAX_DRAFTERS}");
     }
     
     _scheduleDeletion();
@@ -243,7 +247,7 @@ class Draft {
   
   // Sends a message to all users waiting.
   void _sendWaitingMessage() {
-    _sendAll({"message":"Waiting for draft to start: ${_drafters.length}/${DRAFTERS_TO_START} users connected."});
+    _sendAll({"message":"Waiting for draft to start: ${_drafters.length}/${_draftersToStart} users connected."});
   }
   
   // Sends information to all players about where packs are.
@@ -275,6 +279,7 @@ class Draft {
 
   List<Drafter> _drafters;
   List<int> _sets;
+  int _draftersToStart;
   bool _hasStarted;
   int _currentPack;
   String _id;

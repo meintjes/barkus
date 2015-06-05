@@ -65,6 +65,9 @@ class DraftApi {
 class CreateRequestFactory {
   static CreateRequest fromJson(core.Map _json) {
     var message = new CreateRequest();
+    if (_json.containsKey("drafters")) {
+      message.drafters = _json["drafters"];
+    }
     if (_json.containsKey("sets")) {
       message.sets = _json["sets"];
     }
@@ -73,6 +76,9 @@ class CreateRequestFactory {
 
   static core.Map toJson(CreateRequest message) {
     var _json = new core.Map();
+    if (message.drafters != null) {
+      _json["drafters"] = message.drafters;
+    }
     if (message.sets != null) {
       _json["sets"] = message.sets;
     }

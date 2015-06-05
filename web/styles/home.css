@@ -29,12 +29,16 @@ form {
   cursor: auto;
 }
 
-select {
+select, input[type=number] {
   padding: 15px;
 
   border: 0px;
 
   background-color: #dcdcdc;
+}
+
+input[type=number] {
+  width: 2.5em;
 }
 
 .set-selection {

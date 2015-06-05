@@ -12,7 +12,7 @@ class DraftApi {
   @ApiMethod(method: "POST", path: "create")
   CreateResponse createDraft(CreateRequest request) {
     CreateResponse response = new CreateResponse();
-    response.draftId = internal.create(request.sets);
+    response.draftId = internal.create(request.sets, request.drafters);
     return response;
   }
 }

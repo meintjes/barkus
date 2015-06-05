@@ -19,10 +19,12 @@ void main() {
     }
   }
 
-  querySelector("#create").onClick.listen(createPod);
+  querySelector("#create").onSubmit.listen(createPod);
 }
 
 Future createPod(Event e) async {
+  e.preventDefault();
+
   CreateRequest request = new CreateRequest();
 
   // Prepare the creation request, trying to add the packs the user indicated.
@@ -30,16 +32,25 @@ Future createPod(Event e) async {
   for (var elem in packs) {
     int selectedPack = (elem as SelectElement).selectedIndex - 1;
     if (selectedPack < 0) {
-      querySelector("#create").onClick.listen(createPod);
-      return null;
+      return;
     }
     else {
       request.sets.add(selectedPack);
     }
+
+    InputElement drafters = querySelector("#drafters");
+    try {
+      request.drafters = int.parse(drafters.value);
+    }
+    catch (error) {
+      drafters.value = "8";
+      request.drafters = 8;
+    }
   }
   
   // The dropdown selections are valid. Prepare to actually submit the request.
-  querySelector("#create").setAttribute("disabled", "true");
+  querySelector("#button").setAttribute("disabled", "true");
+  querySelector("#drafters").setAttribute("disabled", "true");
   for (var elem in packs) {
     elem.setAttribute("disabled", "true");
   }
