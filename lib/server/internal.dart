@@ -111,9 +111,9 @@ class Draft {
     drafter.sendPool();
     
     // Pass the pack to the next person in line.
-    // Note that _currentPack % 2 == 0 if this is pack 0 or 2 (1 or 3), so if
-    // this expression is true, then we pass "left" (backwards in index).
-    int nextInLine = (_currentPack % 2 == 0 ? drafter.index - 1
+    // Note that _currentPack % 2 == 1 if this is pack 1 or 3, so if this
+    // expression is true, then we pass "left" (backwards in index).
+    int nextInLine = (_currentPack % 2 == 1 ? drafter.index - 1
                                             : drafter.index + 1);
     nextInLine %= _drafters.length;
     Drafter nextDrafter = _drafters[nextInLine];
@@ -126,7 +126,7 @@ class Draft {
     }
     drafter.packs.removeAt(0);
     // If there's another pack waiting, send it.
-    if (drafter.packs.length == 1) {
+    if (drafter.packs.length >= 1) {
       drafter.sendPack();
     }
 
