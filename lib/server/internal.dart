@@ -69,12 +69,11 @@ class Draft {
         drafter.setName(name);
         drafter.sendPack();
         drafter.sendPool();
-        _sendTableInfo();
       }
     }
-    // If a user successfully joined or reconnected, stop the draft from being
-    // deleted. This code will not be reached if a non-drafter tries to join an
-    // already-started draft.
+    // If a user successfully joined or reconnected, this code will execute. If
+    // someone fails to join, the function returns early.
+    _sendTableInfo();
     _cancelDeletion();
   }
   
@@ -88,9 +87,9 @@ class Draft {
     }
     else {
       _getDrafter(user).sendState = null;
-      _sendTableInfo();
     }
-    
+
+    _sendTableInfo();
     _scheduleDeletion();
   }
   

@@ -8,6 +8,6 @@ class CardSet {
 final List<CardSet> supportedSets = [
   new CardSet("Velicta", "VEL"),
   new CardSet("Bloodied Streets", "BST"),
-  //new CardSet("Velicta's Reckoning", "VLR"),
+  //new CardSet("Velicta's Reckoning", "VRE"),
   new CardSet("Fleets of Ossia", "FOS"),
 ];
