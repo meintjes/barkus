@@ -29,8 +29,8 @@ Future main(List<String> args) async {
 
   // Find the rarities of every card in the set.
   for (var card in cardXml.findAllElements("card")) {
-    var set = card.findElements("set").first;
-    if (set.text == args[0]) {
+    var set = card.findElements("set").firstWhere((set) => set.text == args[0], orElse: () => null);
+    if (set != null) {
       String cardName = card.findElements("name").first.text;
       switch (set.getAttribute("rarity")) {
         case "C":

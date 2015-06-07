@@ -1,3 +1,6 @@
+Oblivion Ring
+Evolving Wilds
+Ornithopter
 Veteran of the Revolution
 Makeshift Barricade
 Glory Seeker
@@ -57,6 +60,7 @@ Carcass Giant
 Envenomed Kiss
 Last Gasp
 Mantle of Vishtal
+Murder
 Induced Insanity
 Blood Tithe [TAR]
 Disquiet
@@ -113,3 +117,4 @@ Fading Powerstone
 Powerstone Shard
 Dorian Armory
 Dorian Stores
+Shimmering Grotto
