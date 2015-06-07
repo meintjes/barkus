@@ -14,3 +14,4 @@ dependencies:
   logging_handlers: any
   rpc: any
   uuid: any
+  xml: any
