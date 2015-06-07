@@ -3,3 +3,8 @@ Island
 Swamp
 Mountain
 Forest
+Solid Gold
+Solid Gold
+Solid Gold
+Solid Gold
+Solid Gold
