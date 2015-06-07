@@ -45,14 +45,16 @@
 .card {
   cursor: pointer;
   display: inline-block;
-  -webkit-user-select: none;  /* Chrome all / Safari all */
-  -moz-user-select: none;     /* Firefox all */
-  -ms-user-select: none;      /* IE 10+ */
-
 
   padding: 3px 5px;
 
   background-color: #dcdcdc;
+}
+
+.card[pack=true] {
+  -webkit-user-select: none;  /* Chrome all / Safari all */
+  -moz-user-select: none;     /* Firefox all */
+  -ms-user-select: none;      /* IE 10+ */
 }
 
 .card:hover {
