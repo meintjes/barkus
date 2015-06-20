@@ -36,7 +36,7 @@ Future requestHandler(HttpRequest request) async {
   }
   
   // Upgrade and handle WebSocket requests.
-  else if (request.uri.path == '/ws') {
+  else if (request.uri.path == '/ws' && WebSocketTransformer.isUpgradeRequest(request)) {
     WebSocketTransformer.upgrade(request).then(listenToWebSocket);
   }
   
