@@ -2,13 +2,19 @@ import 'dart:io';
 import 'dart:async';
 import 'package:xml/xml.dart' as XML;
 
+/*
+ * To use the import tool, run it from inside the bin subdirectory, passing a
+ * set's abbreviation as the only argument. ngaconstructed.xml should be in the
+ * main directory. Then update sets.dart with the new additions.
+ */
+
 Future main(List<String> args) async {
   if (args.length != 1) {
     print("Expected exactly one argument, a set's abbreviation.");
     return;
   }
   
-  final String cardsPath = "../cards.xml";
+  final String cardsPath = "../ngaconstructed.xml";
   final String setsPath = "../lib/common/sets/${args[0]}";
   
   List<String> commons = new List<String>();
