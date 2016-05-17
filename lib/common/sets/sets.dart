@@ -40,4 +40,6 @@ final List<CardSet> supportedSets = [
   new CardSet("NGA Masters 2", "NM2"),
 
   new CardSet("NGA Allstars", "NGB"),
+  
+  new CardSet("Catarinia", "CAT"),
 ];
